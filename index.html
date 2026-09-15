@@ -5,18 +5,45 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="OLEA Broadcast — Ingeniería transmisora desde 1987. Transmisores AM/FM, antenas, sistemas radiantes y puesta en marcha en todo Chile.">
 <title>OLEA Broadcast — Ingeniería que se escucha.</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
-<script type="importmap">
-{
-  "imports": {
-    "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.12.5/+esm",
-    "gsap/ScrollTrigger": "https://cdn.jsdelivr.net/npm/gsap@3.12.5/ScrollTrigger/+esm",
-    "lenis": "https://cdn.jsdelivr.net/npm/lenis@1.1.18/+esm"
+<style>
+/* Fallback fonts if Google Fonts blocked — still premium */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap');
+</style>
+<script>
+// Inline preloader fallback — guarantees content shows even if app.js fails (offline CDN)
+// Hides preloader after 3s no matter what, and reveals hero
+(function(){
+  var fired=false;
+  function hide(){
+    if(fired) return; fired=true;
+    var p=document.getElementById('preloader');
+    if(p){ p.classList.add('hidden'); p.setAttribute('aria-hidden','true'); }
+    document.body.style.overflow='';
+    // reveal hero even without GSAP
+    document.querySelectorAll('.hero-title .line-inner').forEach(function(el,i){
+      el.style.transition='transform 0.9s cubic-bezier(0.76,0,0.24,1) '+(i*0.08)+'s';
+      el.style.transform='translateY(0)';
+    });
+    document.querySelectorAll('.reveal').forEach(function(el,i){
+      el.style.transition='opacity 0.6s ease '+(0.15+i*0.06)+'s, transform 0.6s ease '+(0.15+i*0.06)+'s';
+      el.style.opacity='1'; el.style.transform='none';
+      el.classList.add('in');
+    });
   }
-}
+  // auto hide after 3.2s
+  setTimeout(hide, 3200);
+  // hide on click skip if present before app.js loads
+  document.addEventListener('DOMContentLoaded', function(){
+    var skip=document.getElementById('preloader-skip');
+    var pre=document.getElementById('preloader');
+    if(skip) skip.addEventListener('click', hide);
+    if(pre) pre.addEventListener('click', function(e){ if(e.target===pre) hide(); });
+    // expose for app.js to call and cancel timer
+    window.__hidePreloader = hide;
+  });
+  window.__hidePreloader = hide;
+})();
 </script>
 </head>
 <body>
@@ -379,6 +406,9 @@
   </div>
 </footer>
 
-<script type="module" src="app.js"></script>
+<script src="app.js"></script>
+<noscript>
+<style>#preloader{display:none!important} .hero-title .line-inner{transform:none!important} .reveal{opacity:1!important;transform:none!important}</style>
+</noscript>
 </body>
 </html>
