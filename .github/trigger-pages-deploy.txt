@@ -1,0 +1,5 @@
+Trigger GitHub Pages deploy
+
+This file was added to force a push and trigger the deploy workflow for branch arena/01a0a675-scroll-craft.
+
+Timestamp: 2026-09-15T23:45:00Z
