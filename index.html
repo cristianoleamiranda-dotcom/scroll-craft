@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sender — Engineering the Signal | Ingeniería RF, Radiodifusión y Telecomunicaciones en Chile</title>
+<meta name="description" content="Empresa chilena especializada en ingeniería RF, radiodifusión AM/FM, enlaces STL, sistemas NAVTEX y comunicaciones profesionales. Más de 20 años diseñando, fabricando e implementando sistemas de transmisión.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230a0a0b'/%3E%3Cpath d='M6 20 L12 20 L15 10 L20 26 L23 16 L26 16' stroke='%23ff4d00' stroke-width='2.4' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="assets/fonts/space-grotesk-latin-wght-normal.woff2">
+<link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+
+<!-- ===== OVERLAYS ===== -->
+<div class="noise" aria-hidden="true"></div>
+<div class="edge-grid" aria-hidden="true"></div>
+<div class="progress" aria-hidden="true"><div class="progress__bar" id="progressBar"></div></div>
+
+<div class="cursor" id="cursor" aria-hidden="true">
+  <div class="cursor__dot"></div>
+  <div class="cursor__ring"></div>
+</div>
+
+<!-- ===== PRELOADER ===== -->
+<div class="preloader" id="preloader" aria-hidden="true">
+  <div class="preloader__panel preloader__panel--top"></div>
+  <div class="preloader__panel preloader__panel--bottom"></div>
+  <div class="preloader__inner">
+    <span class="preloader__label mono">INICIANDO TRANSMISIÓN</span>
+    <span class="preloader__count mono" id="preCount">00</span>
+    <span class="preloader__sub mono">SENDER · CHILE</span>
+  </div>
+</div>
+
+<!-- ===== NAV ===== -->
+<header class="nav" id="nav">
+  <a class="nav__logo mono" href="#hero" data-cursor>SENDER<span class="nav__pulse"></span></a>
+  <nav class="nav__links" aria-label="Navegación principal">
+    <a href="#about" data-cursor>NOSOTROS</a>
+    <a href="#process" data-cursor>INGENIERÍA</a>
+    <a href="#products" data-cursor>PRODUCTOS</a>
+    <a href="#work" data-cursor>PROYECTOS</a>
+  </nav>
+  <div class="nav__right">
+    <a href="#quote" class="nav__cta" data-cursor>CONTACTO</a>
+    <button class="nav__menu" id="menuBtn" data-cursor aria-label="Abrir menú" aria-expanded="false">
+      <span class="nav__menu-label mono">MENÚ</span>
+      <span class="nav__menu-lines" aria-hidden="true"><i></i><i></i></span>
+    </button>
+  </div>
+</header>
+
+<!-- ===== MENU OVERLAY ===== -->
+<div class="menu" id="menu" aria-hidden="true">
+  <nav class="menu__list" aria-label="Menú completo">
+    <a class="menu__link" href="#hero"><span class="mono menu__idx">01</span><span class="menu__word">PORTADA</span><span class="menu__arrow">→</span></a>
+    <a class="menu__link" href="#about"><span class="mono menu__idx">02</span><span class="menu__word">NOSOTROS</span><span class="menu__arrow">→</span></a>
+    <a class="menu__link" href="#process"><span class="mono menu__idx">03</span><span class="menu__word">INGENIERÍA</span><span class="menu__arrow">→</span></a>
+    <a class="menu__link" href="#products"><span class="mono menu__idx">04</span><span class="menu__word">PRODUCTOS</span><span class="menu__arrow">→</span></a>
+    <a class="menu__link" href="#work"><span class="mono menu__idx">05</span><span class="menu__word">PROYECTOS</span><span class="menu__arrow">→</span></a>
+    <a class="menu__link" href="#quote"><span class="mono menu__idx">06</span><span class="menu__word">COTIZACIÓN</span><span class="menu__arrow">→</span></a>
+    <a class="menu__link" href="#contact"><span class="mono menu__idx">07</span><span class="menu__word">CONTACTO</span><span class="menu__arrow">→</span></a>
+  </nav>
+  <div class="menu__meta">
+    <p class="mono">BLANCO VIEL 1108, 2º PISO<br>SAN MIGUEL — SANTIAGO, CHILE</p>
+    <p class="mono"><a href="mailto:sender@sender.cl">SENDER@SENDER.CL</a><br><a href="tel:+56983864148">+56 9 8386 4148</a></p>
+  </div>
+</div>
+
+<!-- ===== HUD ===== -->
+<div class="hud mono" id="hud" aria-hidden="true">
+  <span class="hud__idx" id="hudIndex">01</span><span class="hud__sep">/ 08 —</span><span class="hud__name" id="hudName">PORTADA</span>
+</div>
+
+<main>
+
+<!-- ===== HERO ===== -->
+<section class="hero" id="hero" data-section="PORTADA">
+  <div class="hero__bg" aria-hidden="true"><img src="assets/img/hero.jpg" alt="" fetchpriority="high"></div>
+  <div class="hero__scrim" aria-hidden="true"></div>
+  <span class="hero__corner hero__corner--tl mono" aria-hidden="true">+</span>
+  <span class="hero__corner hero__corner--tr mono" aria-hidden="true">+</span>
+  <span class="hero__corner hero__corner--bl mono" aria-hidden="true">+</span>
+  <span class="hero__corner hero__corner--br mono" aria-hidden="true">+</span>
+
+  <div class="hero__content">
+    <p class="hero__eyebrow mono" id="heroEyebrow">SENDER — ENGINEERING THE SIGNAL — CHILE</p>
+    <h1 class="hero__title">
+      <span class="hero__line"><span class="hero__line-inner">ENGINEERING</span></span>
+      <span class="hero__line"><span class="hero__line-inner">THE <em class="hero__signal">SIGNAL</em></span></span>
+    </h1>
+    <div class="hero__meta">
+      <p class="hero__sub" id="heroSub">Ingeniería RF, radiodifusión y sistemas de transmisión</p>
+      <span class="mono hero__region" id="heroRegion">CHILE · LATAM</span>
+    </div>
+  </div>
+
+  <div class="hero__scroll mono" aria-hidden="true">
+    <span id="heroScrollText">DESPLÁZATE PARA AVANZAR</span>
+    <i class="hero__scroll-line"></i>
+  </div>
+</section>
+
+<!-- ===== MARQUEE ===== -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee__row">
+    <div class="marquee__track" id="marqueeTop">
+      <span>TECNOLOGÍA QUE CONECTA SISTEMAS CRÍTICOS</span><span class="marquee__star">✳</span>
+      <span>MÁS DE 20 AÑOS EN TRANSMISIÓN PROFESIONAL</span><span class="marquee__star">✳</span>
+    </div>
+  </div>
+  <div class="marquee__row marquee__row--alt">
+    <div class="marquee__track" id="marqueeBottom">
+      <span>RF · RADIODIFUSIÓN · TRANSMISIÓN</span><span class="marquee__star">✳</span>
+      <span>CHILE · LATAM</span><span class="marquee__star">✳</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== STATEMENT ===== -->
+<section class="statement" id="statement" data-section="MANIFIESTO">
+  <h2 class="statement__text" id="statementText">
+    <span class="w">Diseñamos</span> <span class="w">la</span> <span class="w">señal.</span>
+    <span class="w">Construimos</span> <span class="w">el</span> <span class="w accent">sistema.</span>
+  </h2>
+  <div class="statement__foot" data-reveal>
+    <p>Más de 20 años desarrollando soluciones de ingeniería para radiodifusión, telecomunicaciones y transmisión profesional.</p>
+    <a class="btn btn--accent magnetic" href="#quote" data-cursor><span class="btn__label">SOLICITAR ASESORÍA</span><span class="btn__arrow">→</span></a>
+  </div>
+</section>
+
+<!-- ===== ABOUT ===== -->
+<section class="section about" id="about" data-section="NOSOTROS">
+  <header class="section-head">
+    <span class="section-label mono" data-reveal>QUIÉNES SOMOS</span>
+    <h2 class="section-title">Ingeniería que<br>entiende la señal.</h2>
+  </header>
+  <div class="about__grid">
+    <div class="about__text">
+      <p class="about__lead" data-reveal>Somos una empresa chilena especializada en telecomunicaciones, radiodifusión e ingeniería RF, con más de 20 años de experiencia.</p>
+      <p data-reveal>Diseñamos, desarrollamos e implementamos soluciones para sistemas de transmisión y comunicaciones profesionales.</p>
+      <a href="#process" class="text-link mono" data-cursor data-reveal>VER INGENIERÍA →</a>
+    </div>
+    <div class="about__media" data-reveal>
+      <div class="about__clip">
+        <img class="about__img" src="assets/img/about.jpg" alt="Sala técnica de radiodifusión con equipos de transmisión" loading="lazy">
+      </div>
+      <p class="mono about__caption">SALA DE TRANSMISIÓN · SISTEMAS DE RADIODIFUSIÓN — CHILE · LATAM</p>
+    </div>
+  </div>
+  <div class="stats" id="stats">
+    <div class="stat" data-reveal>
+      <span class="stat__num mono"><span class="stat__count" data-count="20">00</span><span class="stat__plus">+</span></span>
+      <span class="stat__label mono">AÑOS DE EXPERIENCIA</span>
+    </div>
+    <div class="stat" data-reveal>
+      <span class="stat__num">RF</span>
+      <span class="stat__label mono">INGENIERÍA</span>
+    </div>
+    <div class="stat" data-reveal>
+      <span class="stat__num">AM / FM</span>
+      <span class="stat__label mono">RADIODIFUSIÓN</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PROCESS (pinned) ===== -->
+<section class="section process" id="process" data-section="INGENIERÍA">
+  <header class="section-head process__head">
+    <span class="section-label mono" data-reveal>INGENIERÍA</span>
+    <h2 class="section-title">De la necesidad al sistema.</h2>
+    <p class="section-desc" data-reveal>Un método técnico, ordenado y verificable: desde el requerimiento inicial hasta la operación continua del sistema.</p>
+  </header>
+
+  <div class="process__pin" id="processPin">
+    <div class="process__stage">
+      <span class="process__num mono" id="processNum" aria-hidden="true">01</span>
+      <div class="process__steps">
+        <article class="step" data-step="0">
+          <span class="step__idx mono">01</span>
+          <h3 class="step__title">DIAGNÓSTICO</h3>
+          <p class="step__text">Entendemos el requerimiento técnico y el entorno de operación.</p>
+        </article>
+        <article class="step" data-step="1">
+          <span class="step__idx mono">02</span>
+          <h3 class="step__title">INGENIERÍA</h3>
+          <p class="step__text">Desarrollamos la solución RF y de transmisión adecuada.</p>
+        </article>
+        <article class="step" data-step="2">
+          <span class="step__idx mono">03</span>
+          <h3 class="step__title">IMPLEMENTACIÓN</h3>
+          <p class="step__text">Integramos equipos, sistemas e infraestructura.</p>
+        </article>
+        <article class="step" data-step="3">
+          <span class="step__idx mono">04</span>
+          <h3 class="step__title">SOPORTE</h3>
+          <p class="step__text">Mantenemos la continuidad y el desempeño técnico.</p>
+        </article>
+      </div>
+      <div class="process__progress">
+        <span class="process__bar"><i id="processBar"></i></span>
+        <span class="mono process__count" id="processCount">01 / 04</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== WORK / AREAS (pinned horizontal) ===== -->
+<section class="section work" id="work" data-section="PROYECTOS">
+  <header class="section-head work__head">
+    <span class="section-label mono" data-reveal>PROYECTOS</span>
+    <h2 class="section-title">Sistemas que llevan<br>la señal más lejos.</h2>
+    <p class="section-desc" data-reveal>Áreas en las que Sender diseña, implementa y mantiene sistemas para operadores de radiodifusión, telecomunicaciones y comunicaciones profesionales.</p>
+  </header>
+
+  <div class="work__pin" id="workPin">
+    <div class="work__track" id="workTrack">
+      <article class="card">
+        <div class="card__media"><img src="assets/img/area-stl.jpg" alt="Torre con enlaces de microondas STL" loading="lazy"></div>
+        <div class="card__body">
+          <span class="card__num mono">01</span>
+          <h3 class="card__title">STL / ENLACES</h3>
+          <p class="card__text">Enlaces estudio–planta y radioenlaces para transporte confiable de la señal.</p>
+        </div>
+      </article>
+      <article class="card">
+        <div class="card__media"><img src="assets/img/area-transmision.jpg" alt="Transmisor AM con instrumentos analógicos en sala técnica" loading="lazy"></div>
+        <div class="card__body">
+          <span class="card__num mono">02</span>
+          <h3 class="card__title">TRANSMISIÓN</h3>
+          <p class="card__text">Plantas transmisoras AM y FM: equipos, sistemas radiantes e infraestructura.</p>
+        </div>
+      </article>
+      <article class="card">
+        <div class="card__media"><img src="assets/img/area-radiodifusion.jpg" alt="Torre de radiodifusión con antenas panel y parabólicas" loading="lazy"></div>
+        <div class="card__body">
+          <span class="card__num mono">03</span>
+          <h3 class="card__title">RADIODIFUSIÓN</h3>
+          <p class="card__text">Ingeniería de emisoras: desde el estudio hasta la antena, con soporte técnico continuo.</p>
+        </div>
+      </article>
+      <article class="card">
+        <div class="card__media"><img src="assets/img/area-automatizacion.jpg" alt="Rack de equipos con indicadores de estado" loading="lazy"></div>
+        <div class="card__body">
+          <span class="card__num mono">04</span>
+          <h3 class="card__title">AUTOMATIZACIÓN</h3>
+          <p class="card__text">Control, monitoreo y automatización de sistemas de transmisión y estaciones.</p>
+        </div>
+      </article>
+      <article class="card">
+        <div class="card__media"><img src="assets/img/area-comunicaciones.jpg" alt="Estación costera de radio con mástil al atardecer" loading="lazy"></div>
+        <div class="card__body">
+          <span class="card__num mono">05</span>
+          <h3 class="card__title">COMUNICACIONES</h3>
+          <p class="card__text">Sistemas NAVTEX, HF, VHF y UHF para comunicaciones críticas y profesionales.</p>
+        </div>
+      </article>
+      <article class="card">
+        <div class="card__media"><img src="assets/img/area-rf.jpg" alt="Banco de trabajo de ingeniería RF con bobinas toroidales" loading="lazy"></div>
+        <div class="card__body">
+          <span class="card__num mono">06</span>
+          <h3 class="card__title">RF</h3>
+          <p class="card__text">Diseño y fabricación de componentes y sistemas de radiofrecuencia a medida.</p>
+        </div>
+      </article>
+      <a class="card card--cta" href="#quote" data-cursor>
+        <div class="card__body card__body--cta">
+          <span class="card__num mono">07</span>
+          <h3 class="card__title">¿TU SISTEMA SIGUE AQUÍ?</h3>
+          <p class="card__text">Hablemos de tu próximo proyecto de transmisión o comunicaciones.</p>
+          <span class="card__arrow">→</span>
+        </div>
+      </a>
+    </div>
+    <div class="work__progress" aria-hidden="true"><i class="work__bar" id="workBar"></i></div>
+  </div>
+</section>
+
+<!-- ===== PRODUCTS ===== -->
+<section class="section products" id="products" data-section="PRODUCTOS">
+  <header class="section-head">
+    <span class="section-label mono" data-reveal>PRODUCTOS</span>
+    <h2 class="section-title">Tecnología para<br>transmitir con precisión.</h2>
+    <p class="section-desc" data-reveal>Catálogo de equipos y sistemas que Sender diseña, fabrica, integra y respalda: transmisores AM y FM, amplificadores MF, sistemas NAVTEX, enlaces, procesamiento de audio, antenas, torres y componentes RF.</p>
+    <span class="mono products__count" data-reveal>ÍNDICE DE PRODUCTOS — 12 FAMILIAS</span>
+  </header>
+
+  <div class="products__grid">
+    <aside class="products__index" id="productIndex" aria-label="Índice de familias de productos"></aside>
+    <div class="products__fig" id="productFig"></div>
+  </div>
+</section>
+
+<!-- ===== QUOTE ===== -->
+<section class="section quote" id="quote" data-section="COTIZACIÓN">
+  <header class="section-head">
+    <span class="section-label mono" data-reveal>COTIZACIÓN</span>
+    <h2 class="section-title">¿Tienes un desafío técnico?</h2>
+    <p class="section-desc" data-reveal>Cuéntanos qué necesitas implementar, mejorar o transmitir.</p>
+  </header>
+
+  <div class="quote__grid">
+    <div class="quote__aside">
+      <a class="btn btn--accent magnetic" id="waAside" href="https://wa.me/56983864148?text=Hola%20Sender%2C%20necesito%20asesor%C3%ADa%20t%C3%A9cnica%20en%20radiodifusi%C3%B3n%20%2F%20RF." target="_blank" rel="noopener" data-cursor><span class="btn__label">CONTACTAR POR WHATSAPP</span><span class="btn__arrow">↗</span></a>
+      <a class="btn btn--ghost magnetic" href="mailto:sender@sender.cl" data-cursor><span class="btn__label">SENDER@SENDER.CL</span><span class="btn__arrow">→</span></a>
+      <p class="mono quote__note" data-reveal>RESPUESTA EN 24/48 H<br>CHILE · LATAM</p>
+    </div>
+
+    <form class="form" id="quoteForm" novalidate data-reveal>
+      <div class="form__row">
+        <label class="field">
+          <span class="field__label mono">NOMBRE *</span>
+          <input type="text" name="nombre" required autocomplete="name" placeholder="Tu nombre">
+        </label>
+        <label class="field">
+          <span class="field__label mono">EMPRESA / EMISORA</span>
+          <input type="text" name="empresa" autocomplete="organization" placeholder="Empresa o emisora">
+        </label>
+      </div>
+      <div class="form__row">
+        <label class="field">
+          <span class="field__label mono">CORREO ELECTRÓNICO *</span>
+          <input type="email" name="correo" required autocomplete="email" placeholder="correo@empresa.cl">
+        </label>
+        <label class="field">
+          <span class="field__label mono">TELÉFONO</span>
+          <input type="tel" name="telefono" autocomplete="tel" placeholder="+56 9 …">
+        </label>
+      </div>
+      <label class="field">
+        <span class="field__label mono">ÁREA DE INTERÉS</span>
+        <span class="select">
+          <select name="area" required>
+            <option value="" selected>Selecciona un área</option>
+            <option>Radiodifusión AM / FM</option>
+            <option>Sistemas NAVTEX</option>
+            <option>Comunicaciones HF</option>
+            <option>Enlaces STL / VHF / UHF</option>
+            <option>Antenas y torres</option>
+            <option>Automatización y monitoreo</option>
+            <option>Componentes RF</option>
+            <option>Otro</option>
+          </select>
+          <i class="select__arrow mono">▾</i>
+        </span>
+      </label>
+      <label class="field">
+        <span class="field__label mono">DESCRIBE TU REQUERIMIENTO</span>
+        <textarea name="mensaje" rows="4" placeholder="Cuéntanos qué necesitas implementar, mejorar o transmitir…"></textarea>
+      </label>
+      <div class="form__actions">
+        <button type="submit" class="btn btn--accent magnetic" data-cursor><span class="btn__label">ENVIAR SOLICITUD</span><span class="btn__arrow">→</span></button>
+        <a class="btn btn--ghost magnetic" id="waQuote" href="https://wa.me/56983864148?text=Hola%20Sender%2C%20necesito%20asesor%C3%ADa%20t%C3%A9cnica%20en%20radiodifusi%C3%B3n%20%2F%20RF." target="_blank" rel="noopener" data-cursor><span class="btn__label">ENVIAR POR WHATSAPP</span><span class="btn__arrow">↗</span></a>
+      </div>
+      <p class="mono form__note" id="formNote">Al enviar se abrirá tu cliente de correo con la solicitud lista para Sender.</p>
+    </form>
+  </div>
+</section>
+
+</main>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer" id="contact" data-section="CONTACTO">
+  <div class="footer__top">
+    <span class="section-label mono" data-reveal>CONTACTO</span>
+    <h2 class="footer__title" id="footerTitle">Hablemos de tu<br><em>próximo sistema.</em></h2>
+    <p class="footer__lead" data-reveal>Diseño, fabricación, implementación y soporte de sistemas de transmisión y comunicaciones en Chile y Latinoamérica.</p>
+    <div class="footer__ctas" data-reveal>
+      <a class="btn btn--accent magnetic" href="mailto:sender@sender.cl" data-cursor><span class="btn__label">SOLICITAR ASESORÍA</span><span class="btn__arrow">→</span></a>
+      <a class="btn btn--ghost magnetic" href="https://wa.me/56983864148?text=Hola%20Sender%2C%20necesito%20asesor%C3%ADa%20t%C3%A9cnica%20en%20radiodifusi%C3%B3n%20%2F%20RF." target="_blank" rel="noopener" data-cursor><span class="btn__label">WHATSAPP</span><span class="btn__arrow">↗</span></a>
+    </div>
+  </div>
+
+  <div class="footer__data">
+    <div data-reveal>
+      <span class="mono footer__k">DIRECCIÓN</span>
+      <p>Blanco Viel 1108, 2º piso,<br>San Miguel — Santiago, Chile</p>
+    </div>
+    <div data-reveal>
+      <span class="mono footer__k">TELÉFONO</span>
+      <p><a href="tel:+56983864148" data-cursor>+56 9 8386 4148</a></p>
+    </div>
+    <div data-reveal>
+      <span class="mono footer__k">CORREO</span>
+      <p><a href="mailto:sender@sender.cl" data-cursor>sender@sender.cl</a></p>
+    </div>
+    <div data-reveal>
+      <span class="mono footer__k">CORREO ALTERNATIVO</span>
+      <p><a href="mailto:bis.ltda@gmail.com" data-cursor>bis.ltda@gmail.com</a></p>
+    </div>
+  </div>
+
+  <div class="footer__word" id="footerWord" aria-hidden="true"><span>SENDER</span></div>
+
+  <div class="footer__bottom mono">
+    <span>© 2026 SENDER — INGENIERÍA RF Y RADIODIFUSIÓN</span>
+    <span class="footer__loc">SANTIAGO · CHILE</span>
+    <button class="footer__top-btn" id="toTop" data-cursor>↑ VOLVER AL INICIO</button>
+  </div>
+</footer>
+
+<script src="assets/vendor/gsap.min.js"></script>
+<script src="assets/vendor/ScrollTrigger.min.js"></script>
+<script src="assets/vendor/lenis.min.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
