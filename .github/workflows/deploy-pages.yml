@@ -1,0 +1,70 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - arena/01a0a675-scroll-craft
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies and build (if package.json has build)
+        run: |
+          if [ -f package.json ]; then
+            npm ci || true
+            if grep -q "\"build\"\s*:\s*\"" package.json; then
+              npm run build || true
+            fi
+          fi
+
+      - name: Prepare Pages artifact
+        run: |
+          # remove node_modules if present so it won't be uploaded
+          rm -rf node_modules || true
+
+          # create a clean pages directory and copy files excluding repo/meta files
+          mkdir -p pages
+          shopt -s dotglob || true
+          for f in * .[!.]* ..?*; do
+            # skip current/parent entries
+            [ "$f" = "." ] && continue || true
+            [ "$f" = ".." ] && continue || true
+            case "$f" in
+              .git|.github|node_modules|scroll-craft.zip)
+                continue
+                ;;
+            esac
+            cp -a "$f" pages/ || true
+          done
+
+          # If a build output directory exists prefer it (common names: dist, build, public)
+          if [ -d pages/dist ]; then
+            mkdir -p pages_temp && cp -a pages/dist/. pages_temp/ && rm -rf pages/* && cp -a pages_temp/. pages/ || true
+          elif [ -d pages/build ]; then
+            mkdir -p pages_temp && cp -a pages/build/. pages_temp/ && rm -rf pages/* && cp -a pages_temp/. pages/ || true
+          elif [ -d pages/public ]; then
+            mkdir -p pages_temp && cp -a pages/public/. pages_temp/ && rm -rf pages/* && cp -a pages_temp/. pages/ || true
+          fi
+
+          echo "Prepared pages/ with contents:"
+          ls -la pages | sed -n '1,200p'
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: pages
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v1
