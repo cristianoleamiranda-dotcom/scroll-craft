@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="OLEA Broadcast — Ingeniería transmisora desde 1987. Transmisores AM/FM, antenas, sistemas radiantes y puesta en marcha en todo Chile.">
+<title>OLEA Broadcast — Ingeniería que se escucha.</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+/* Fallback fonts if Google Fonts blocked — still premium */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap');
+</style>
+<script>
+// Inline preloader fallback — guarantees content shows even if app.js fails (offline CDN)
+// Hides preloader after 3s no matter what, and reveals hero
+(function(){
+  var fired=false;
+  function hide(){
+    if(fired) return; fired=true;
+    var p=document.getElementById('preloader');
+    if(p){ p.classList.add('hidden'); p.setAttribute('aria-hidden','true'); }
+    document.body.style.overflow='';
+    // reveal hero even without GSAP
+    document.querySelectorAll('.hero-title .line-inner').forEach(function(el,i){
+      el.style.transition='transform 0.9s cubic-bezier(0.76,0,0.24,1) '+(i*0.08)+'s';
+      el.style.transform='translateY(0)';
+    });
+    document.querySelectorAll('.reveal').forEach(function(el,i){
+      el.style.transition='opacity 0.6s ease '+(0.15+i*0.06)+'s, transform 0.6s ease '+(0.15+i*0.06)+'s';
+      el.style.opacity='1'; el.style.transform='none';
+      el.classList.add('in');
+    });
+  }
+  // auto hide after 3.2s
+  setTimeout(hide, 3200);
+  // hide on click skip if present before app.js loads
+  document.addEventListener('DOMContentLoaded', function(){
+    var skip=document.getElementById('preloader-skip');
+    var pre=document.getElementById('preloader');
+    if(skip) skip.addEventListener('click', hide);
+    if(pre) pre.addEventListener('click', function(e){ if(e.target===pre) hide(); });
+    // expose for app.js to call and cancel timer
+    window.__hidePreloader = hide;
+  });
+  window.__hidePreloader = hide;
+})();
+</script>
+</head>
+<body>
+<!-- Preloader -->
+<div id="preloader" aria-hidden="false">
+  <div class="preloader-inner">
+    <div class="preloader-top">
+      <span class="preloader-eyebrow">OLEA BROADCAST &nbsp;—&nbsp; EST. 1987</span>
+      <div class="preloader-logo">OLEA</div>
+    </div>
+    <div class="preloader-center">
+      <div class="preloader-counter"><span id="preloader-count">00</span><span class="pct">%</span></div>
+      <div class="preloader-bar-wrap"><div class="preloader-bar" id="preloader-bar"></div></div>
+      <div class="preloader-sub">Cargando experiencia — ingeniería que perdura</div>
+    </div>
+    <div class="preloader-bottom">
+      <span>Santiago &nbsp;·&nbsp; Concepción &nbsp;·&nbsp; Antofagasta</span>
+      <button id="preloader-skip">Saltar intro →</button>
+    </div>
+  </div>
+  <div class="preloader-grid"></div>
+</div>
+
+<!-- Nav -->
+<nav id="nav">
+  <div class="nav-inner">
+    <a href="#hero" class="nav-logo">OLEA<span>®</span></a>
+    <div class="nav-links">
+      <a href="#ingenieria">Ingeniería</a>
+      <a href="#proyectos">Proyectos</a>
+      <a href="#productos">Productos</a>
+      <a href="#contacto" class="nav-cta">Cotizar</a>
+    </div>
+    <button id="nav-toggle" aria-label="Menú">
+      <span></span><span></span>
+    </button>
+  </div>
+  <div id="nav-mobile">
+    <a href="#ingenieria">Ingeniería</a>
+    <a href="#proyectos">Proyectos</a>
+    <a href="#productos">Productos</a>
+    <a href="#contacto">Contacto</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section id="hero">
+  <div class="hero-bg">
+    <div class="hero-gradient"></div>
+    <div class="hero-grid"></div>
+    <div class="hero-vignette"></div>
+  </div>
+  <div class="hero-inner">
+    <div class="hero-eyebrow reveal">
+      <span class="dot"></span> TRANSMISIÓN CRÍTICA &nbsp;·&nbsp; 38 AÑOS EN EL AIRE &nbsp;·&nbsp; HECHO EN CHILE
+    </div>
+    <h1 class="hero-title">
+      <span class="line"><span class="line-inner">Ingeniería</span></span>
+      <span class="line"><span class="line-inner serif">que se escucha.</span></span>
+      <span class="line"><span class="line-inner outline">En cada kilómetro.</span></span>
+    </h1>
+    <div class="hero-bottom">
+      <p class="hero-desc reveal" data-delay="0.3">
+        Diseñamos, fabricamos y ponemos en marcha sistemas transmisores AM/FM que no piden permiso para sonar. Potencia estable, eficiencia real, soporte que contesta.
+      </p>
+      <div class="hero-actions reveal" data-delay="0.5">
+        <a href="#productos" class="btn btn-primary">Explorar catálogo →</a>
+        <a href="#ingenieria" class="btn btn-ghost">Cómo trabajamos</a>
+      </div>
+      <div class="hero-stats reveal" data-delay="0.6">
+        <div><strong>340+</strong><span>Transmisores<br>en operación</span></div>
+        <div><strong>12</strong><span>Familias<br>de productos</span></div>
+        <div><strong>98.7%</strong><span>Uptime<br>promedio</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <span>Scrollea para descubrir</span>
+    <div class="scroll-line"><div class="scroll-progress" id="hero-scroll-progress"></div></div>
+  </div>
+  <div class="hero-image-card">
+    <img src="assets/catalog/catalog-01.jpg" alt="Transmisor AM OLEA" loading="eager" width="800" height="600">
+    <div class="hero-card-meta">
+      <span class="kicker">Serie SS · Estado sólido</span>
+      <span class="name">AM 5000SS — 5.0 kW</span>
+      <span class="spec">Eficiencia 82% · 3.800 hrs MTBF</span>
+    </div>
+  </div>
+</section>
+
+<!-- Marquee -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+    <span>AM · FM · STL · RADIANTE · TORRES · ENERGÍA · TIERRA · </span>
+    <span>AM · FM · STL · RADIANTE · TORRES · ENERGÍA · TIERRA · </span>
+    <span>AM · FM · STL · RADIANTE · TORRES · ENERGÍA · TIERRA · </span>
+    <span>AM · FM · STL · RADIANTE · TORRES · ENERGÍA · TIERRA · </span>
+  </div>
+</div>
+
+<!-- Ingeniería -->
+<section id="ingenieria">
+  <div class="section-label"><span>02</span> / Ingeniería</div>
+  <div class="ingenieria-layout">
+    <div class="ingenieria-sticky">
+      <h2 class="ingenieria-title">
+        No vendemos<br>
+        <em>cajas.</em><br>
+        Instalamos<br>
+        <em>certeza.</em>
+      </h2>
+      <div class="ingenieria-progress">
+        <div class="progress-track"><div class="progress-fill" id="eng-progress"></div></div>
+        <div class="progress-steps" id="eng-dots">
+          <button class="dot active" data-step="0">01</button>
+          <button class="dot" data-step="1">02</button>
+          <button class="dot" data-step="2">03</button>
+          <button class="dot" data-step="3">04</button>
+        </div>
+      </div>
+      <p class="ingenieria-note">Fijado mientras scrolleas. Cada paso toma su tiempo — como en obra.</p>
+    </div>
+    <div class="ingenieria-steps">
+      <div class="step active" data-step="0">
+        <div class="step-num">01</div>
+        <h3>Diagnóstico RF &amp; sitio</h3>
+        <p>Medimos lo que importa: conductividad de suelo, ruido eléctrico, perfil de terreno y exigencia de cobertura. Sin humo. Informe con fotos, espectro y carta de recomendación.</p>
+        <ul>
+          <li>Estudio de propagación AM/FM</li>
+          <li>Auditoría eléctrica y tierra</li>
+          <li>Informe en 72 hrs</li>
+        </ul>
+        <div class="step-image"><img src="assets/catalog/catalog-03.jpg" alt="Diagnóstico RF" loading="lazy"></div>
+      </div>
+      <div class="step" data-step="1">
+        <div class="step-num">02</div>
+        <h3>Diseño a medida</h3>
+        <p>La potencia se calcula, no se adivina. Dimensionamos transmisor, sistema radiante y respaldo energético para operar 24/7 con 40°C y polvo en suspensión.</p>
+        <ul>
+          <li>Simulación NEC + campo medido</li>
+          <li>Gabinete IP54 tropicalizado</li>
+          <li>Eficiencia ≥ 80%</li>
+        </ul>
+        <div class="step-image"><img src="assets/catalog/catalog-05.jpg" alt="Diseño" loading="lazy"></div>
+      </div>
+      <div class="step" data-step="2">
+        <div class="step-num">03</div>
+        <h3>Integración &amp; pruebas</h3>
+        <p>En banco, no en tu antena. Burn-in 48 hrs a plena carga, pruebas de modulación, armónicos y respuesta bajo caída de red. Te entregamos curvas reales, no folletos.</p>
+        <ul>
+          <li>Burn-in documentado</li>
+          <li>Medición THD, IMD, SNR</li>
+          <li>Prueba de transferencia automática</li>
+        </ul>
+        <div class="step-image"><img src="assets/catalog/catalog-07.jpg" alt="Integración" loading="lazy"></div>
+      </div>
+      <div class="step" data-step="3">
+        <div class="step-num">04</div>
+        <h3>Puesta en marcha</h3>
+        <p>Viajamos, instalamos, medimos y nos quedamos hasta que marque lo que prometimos. Capacitación a tu operador y protocolo de mantenimiento. Garantía 24 meses.</p>
+        <ul>
+          <li>Puesta en marcha en sitio</li>
+          <li>Capacitación certificada</li>
+          <li>Soporte < 4 hrs</li>
+        </ul>
+        <div class="step-image"><img src="assets/catalog/catalog-09.jpg" alt="Puesta en marcha" loading="lazy"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Proyectos -->
+<section id="proyectos">
+  <div class="proyectos-header">
+    <div class="section-label light"><span>03</span> / Proyectos</div>
+    <div class="proyectos-title-row">
+      <h2>En el aire,<br><em>desde Arica a Punta Arenas.</em></h2>
+      <p>La galería se desplaza horizontalmente mientras haces scroll vertical. Despacito — para apreciar cada torre.</p>
+    </div>
+  </div>
+  <div class="proyectos-sticky">
+    <div class="proyectos-track" id="proyectos-track">
+      <article class="proyecto-card">
+        <div class="card-image"><img src="assets/projects/project-01.jpg" alt="Radio Bio Bio Concepción" loading="lazy"><span class="card-year">2023 · 10 kW</span></div>
+        <div class="card-body">
+          <h3>Radio Bío Bío — Concepción</h3>
+          <p>Reemplazo de transmisor valvular por 10000SS + sistema radiante direccional. +3.2 dB de cobertura nocturna.</p>
+          <div class="card-meta"><span>AM 680 kHz</span><span>Concepción, Biobío</span></div>
+        </div>
+      </article>
+      <article class="proyecto-card">
+        <div class="card-image"><img src="assets/projects/project-02.jpg" alt="Radio Cooperativa Santiago" loading="lazy"><span class="card-year">2022 · 5 kW</span></div>
+        <div class="card-body">
+          <h3>Cooperativa — Maipú</h3>
+          <p>Migración a estado sólido con redundancia N+1. Uptime desde entonces: 99.92%.</p>
+          <div class="card-meta"><span>AM 760 kHz</span><span>Santiago, RM</span></div>
+        </div>
+      </article>
+      <article class="proyecto-card">
+        <div class="card-image"><img src="assets/projects/project-03.jpg" alt="Radio Antofagasta" loading="lazy"><span class="card-year">2024 · 2.5 kW</span></div>
+        <div class="card-body">
+          <h3>Radio Antofagasta — La Negra</h3>
+          <p>Sistema completo en desierto: transmisor 2500SS, torre 62m, malla de tierra 120 radiales.</p>
+          <div class="card-meta"><span>AM 1420 kHz</span><span>Antofagasta</span></div>
+        </div>
+      </article>
+      <article class="proyecto-card">
+        <div class="card-image"><img src="assets/projects/project-04.jpg" alt="FM Positiva" loading="lazy"><span class="card-year">2021 · 3 kW</span></div>
+        <div class="card-body">
+          <h3>FM Positiva — Valdivia</h3>
+          <p>Enlace STL digital + transmisor FM 3000 + antena 4 bahías. Cobertura en zona lacustre.</p>
+          <div class="card-meta"><span>FM 101.3 MHz</span><span>Valdivia, Los Ríos</span></div>
+        </div>
+      </article>
+      <article class="proyecto-card">
+        <div class="card-image"><img src="assets/projects/project-05.jpg" alt="Radio Sago Osorno" loading="lazy"><span class="card-year">2020 · 10 kW</span></div>
+        <div class="card-body">
+          <h3>Radio Sago — Osorno</h3>
+          <p>Modernización completa: sala técnica, grupo electrógeno 40 kVA y automatización.</p>
+          <div class="card-meta"><span>AM 780 kHz</span><span>Osorno, Los Lagos</span></div>
+        </div>
+      </article>
+    </div>
+  </div>
+  <div class="proyectos-hint"><span>← Desliza o scrollea lento →</span></div>
+</section>
+
+<!-- Productos -->
+<section id="productos">
+  <div class="section-label"><span>04</span> / Productos — 12 familias</div>
+  <div class="productos-head">
+    <h2>Un catálogo<br><em>sin letra chica.</em></h2>
+    <div class="productos-controls">
+      <button id="prod-prev" aria-label="Anterior">←</button>
+      <span id="prod-counter">01 / 12</span>
+      <button id="prod-next" aria-label="Siguiente">→</button>
+    </div>
+  </div>
+
+  <div class="productos-layout">
+    <div class="familias-index" id="familias-index">
+      <!-- JS renders 12 buttons -->
+    </div>
+
+    <div class="familia-viewer" id="familia-viewer">
+      <div class="viewer-image">
+        <img id="viewer-img" src="assets/catalog/catalog-01.jpg" alt="Producto" loading="lazy">
+        <div class="viewer-badge" id="viewer-badge">DISPONIBLE · ENTREGA 20 DÍAS</div>
+      </div>
+      <div class="viewer-body">
+        <span class="viewer-kicker" id="viewer-kicker">Familia 01 — Transmisión AM</span>
+        <h3 id="viewer-title">Transmisores AM — Serie SS</h3>
+        <p id="viewer-desc">Estado sólido, modulación PWM de alta eficiencia. De 1 a 10 kW con el mismo gabinete y lógica. Hecho para trabajar 20 años.</p>
+
+        <!-- Tabs only for Transmisores AM -->
+        <div id="am-tabs" class="am-tabs">
+          <div class="tabs-row">
+            <button class="tab active" data-model="1000SS">1000SS</button>
+            <button class="tab" data-model="2500SS">2500SS</button>
+            <button class="tab" data-model="5000SS">5000SS</button>
+            <button class="tab" data-model="10000SS">10000SS</button>
+          </div>
+          <div class="tab-panel" id="tab-panel">
+            <!-- JS renders -->
+          </div>
+        </div>
+
+        <ul class="viewer-specs" id="viewer-specs">
+          <!-- JS renders -->
+        </ul>
+        <div class="viewer-actions">
+          <a href="#contacto" class="btn btn-primary" id="viewer-cta">Cotizar esta familia →</a>
+          <span class="viewer-note">Incluye puesta en marcha y capacitación.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="productos-footnote">
+    <span>Tip: usa el índice de 12 familias o las flechas ← → . La familia <strong>Transmisores AM</strong> tiene tabs de modelos.</span>
+  </div>
+</section>
+
+<!-- Contacto -->
+<section id="contacto">
+  <div class="contacto-grid">
+    <div class="contacto-left">
+      <div class="section-label light"><span>05</span> / Contacto</div>
+      <h2>Hablemos<br><em>sin formularios eternos.</em></h2>
+      <p class="contacto-desc">Cuéntanos qué frecuencia, qué potencia y dónde. Te respondemos con una propuesta en 24 hrs — no con un PDF genérico.</p>
+
+      <div class="contacto-cards">
+        <div class="c-card"><strong>Santiago</strong><span>Av. Providencia 1208, Of. 504<br>+56 2 2234 5678</span></div>
+        <div class="c-card"><strong>Concepción</strong><span>Parque Industrial Escuadrón<br>+56 41 234 8900</span></div>
+      </div>
+
+      <div class="whatsapp-preview" id="whatsapp-preview">
+        <span class="wa-label">Vista previa mensaje WhatsApp:</span>
+        <p id="wa-text">Hola equipo OLEA, soy <em>—</em>. Me interesa cotizar <em>—</em>. Mi correo es <em>—</em>.</p>
+      </div>
+    </div>
+
+    <form class="contacto-form" id="contacto-form" novalidate>
+      <div class="form-row">
+        <label>Nombre
+          <input type="text" id="input-nombre" placeholder="Ej: Cristian Olea" autocomplete="name" required>
+        </label>
+        <label>Correo
+          <input type="email" id="input-correo" placeholder="tucorreo@radio.cl" autocomplete="email" required>
+        </label>
+      </div>
+      <label>¿Qué familia te interesa?
+        <select id="input-familia">
+          <option value="">Selecciona una familia</option>
+          <option>Transmisores AM</option>
+          <option>Transmisores FM</option>
+          <option>Antenas AM</option>
+          <option>Antenas FM</option>
+          <option>Consolas de Audio</option>
+          <option>Procesadores</option>
+          <option>Enlaces STL</option>
+          <option>Sistemas Radiantes</option>
+          <option>Torres</option>
+          <option>Energía</option>
+          <option>Tierra &amp; Pararrayos</option>
+          <option>Repuestos</option>
+        </select>
+      </label>
+      <label>Mensaje (opcional)
+        <textarea id="input-mensaje" rows="4" placeholder="Ej: Necesito 5 kW para 760 kHz en Maipú, con torre de 75m. ¿Plazo y forma de pago?"></textarea>
+      </label>
+      <div class="form-actions">
+        <a id="whatsapp-btn" class="btn btn-whatsapp" href="https://wa.me/56912345678?text=Hola%20equipo%20OLEA" target="_blank" rel="noopener">
+          <span class="wa-icon">◉</span> Enviar por WhatsApp
+        </a>
+        <button type="submit" class="btn btn-ghost">Enviar correo</button>
+      </div>
+      <p class="form-note">Al enviar aceptas que te respondamos en horario laboral. No hacemos spam.</p>
+      <p id="form-feedback" class="form-feedback" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+
+<footer id="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="footer-logo">OLEA</div>
+      <p>Ingeniería transmisora desde 1987.<br>Hecho en Chile, escuchado en todo el territorio.</p>
+    </div>
+    <div class="footer-cols">
+      <div><strong>Explorar</strong><a href="#ingenieria">Ingeniería</a><a href="#proyectos">Proyectos</a><a href="#productos">Productos</a></div>
+      <div><strong>Contacto</strong><a href="mailto:contacto@oleabroadcast.cl">contacto@oleabroadcast.cl</a><a href="tel:+56222345678">+56 2 2234 5678</a><span>Santiago · Concepción</span></div>
+      <div><strong>Legal</strong><span>RUT 76.123.456-7</span><span>Garantía 24 meses</span><span>© 2026 OLEA Broadcast</span></div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>Scroll Craft — sitio inmersivo con GSAP + Lenis. Hecho para scrollear despacio.</span>
+    <span class="footer-dot"></span>
+    <span>Tipografía: Cormorant + Inter + Instrument Serif</span>
+  </div>
+</footer>
+
+<script src="app.js"></script>
+<noscript>
+<style>#preloader{display:none!important} .hero-title .line-inner{transform:none!important} .reveal{opacity:1!important;transform:none!important}</style>
+</noscript>
+</body>
+</html>
