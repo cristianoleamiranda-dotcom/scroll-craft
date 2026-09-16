@@ -18,27 +18,73 @@ concurrency:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Node (optional)
+        if: runner.os == 'Linux' || runner.os == 'macOS'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Build (if package.json has build)
+        run: |
+          if [ -f package.json ]; then
+            echo "package.json found"
+            if jq -e '.scripts.build' package.json > /dev/null 2>&1; then
+              echo "build script detected, installing and running build"
+              npm ci || npm install
+              npm run build || true
+            else
+              echo "no build script"
+            fi
+          else
+            echo "no package.json"
+          fi
+        shell: bash
 
       - name: Prepare Pages artifact
         run: |
+          set -euo pipefail
           mkdir -p pages
-          shopt -s dotglob nullglob
-          for f in *; do
-            case "$f" in
-              .git|.github|node_modules|scroll-craft.zip|pages)
-                continue
-                ;;
-            esac
-            cp -a "$f" pages/
-          done
+          shopt -s dotglob nullglob || true
+
+          # prefer common build output directories if present
+          if [ -d dist ]; then
+            echo "Using dist/ as pages content"
+            cp -a dist/. pages/
+          elif [ -d build ]; then
+            echo "Using build/ as pages content"
+            cp -a build/. pages/
+          elif [ -d public ]; then
+            echo "Using public/ as pages content"
+            cp -a public/. pages/
+          else
+            echo "No build dir found — copying repository root (excluding meta dirs)"
+            for f in * .[!.]* ..?*; do
+              # skip current/parent and metadata
+              [ "$f" = "." ] && continue || true
+              [ "$f" = ".." ] && continue || true
+              case "$f" in
+                .git|.github|node_modules|pages|scroll-craft.zip)
+                  continue
+                  ;;
+              esac
+              cp -a "$f" pages/ || true
+            done
+          fi
+
+          # ensure index exists
+          if [ ! -f pages/index.html ]; then
+            echo "WARNING: pages/index.html not found"
+          fi
+
           echo "Pages artifact contents:"
-          ls -la pages
+          ls -la pages || true
+        shell: bash
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
