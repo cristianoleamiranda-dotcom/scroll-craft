@@ -4,67 +4,52 @@ on:
   push:
     branches:
       - arena/01a0a675-scroll-craft
+  workflow_dispatch:
 
 permissions:
   contents: read
   pages: write
   id-token: write
 
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Install dependencies and build (if package.json has build)
-        run: |
-          if [ -f package.json ]; then
-            npm ci || true
-            if grep -q "\"build\"\s*:\s*\"" package.json; then
-              npm run build || true
-            fi
-          fi
 
       - name: Prepare Pages artifact
         run: |
-          # remove node_modules if present so it won't be uploaded
-          rm -rf node_modules || true
-
-          # create a clean pages directory and copy files excluding repo/meta files
           mkdir -p pages
-          shopt -s dotglob || true
+          shopt -s dotglob
           for f in * .[!.]* ..?*; do
-            # skip current/parent entries
-            [ "$f" = "." ] && continue || true
-            [ "$f" = ".." ] && continue || true
+            [ "$f" = "." ] && continue
+            [ "$f" = ".." ] && continue
             case "$f" in
               .git|.github|node_modules|scroll-craft.zip)
                 continue
                 ;;
             esac
-            cp -a "$f" pages/ || true
+            cp -a "$f" pages/
           done
+          echo "Pages artifact contents:"
+          ls -la pages
 
-          # If a build output directory exists prefer it (common names: dist, build, public)
-          if [ -d pages/dist ]; then
-            mkdir -p pages_temp && cp -a pages/dist/. pages_temp/ && rm -rf pages/* && cp -a pages_temp/. pages/ || true
-          elif [ -d pages/build ]; then
-            mkdir -p pages_temp && cp -a pages/build/. pages_temp/ && rm -rf pages/* && cp -a pages_temp/. pages/ || true
-          elif [ -d pages/public ]; then
-            mkdir -p pages_temp && cp -a pages/public/. pages_temp/ && rm -rf pages/* && cp -a pages_temp/. pages/ || true
-          fi
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
 
-          echo "Prepared pages/ with contents:"
-          ls -la pages | sed -n '1,200p'
-
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v1
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
           path: pages
 
       - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v1
+        id: deployment
+        uses: actions/deploy-pages@v4
