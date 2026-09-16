@@ -34,7 +34,7 @@ jobs:
         run: |
           if [ -f package.json ]; then
             echo "package.json found"
-            if jq -e '.scripts.build' package.json > /dev/null 2>&1; then
+            if node -e "try{const p=require('./package.json'); if(p.scripts && p.scripts.build) process.exit(0); else process.exit(1)}catch(e){process.exit(1)}"; then
               echo "build script detected, installing and running build"
               npm ci || npm install
               npm run build || true
