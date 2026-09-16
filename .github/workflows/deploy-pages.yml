@@ -28,12 +28,10 @@ jobs:
       - name: Prepare Pages artifact
         run: |
           mkdir -p pages
-          shopt -s dotglob
-          for f in * .[!.]* ..?*; do
-            [ "$f" = "." ] && continue
-            [ "$f" = ".." ] && continue
+          shopt -s dotglob nullglob
+          for f in *; do
             case "$f" in
-              .git|.github|node_modules|scroll-craft.zip)
+              .git|.github|node_modules|scroll-craft.zip|pages)
                 continue
                 ;;
             esac
