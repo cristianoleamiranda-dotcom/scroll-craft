@@ -1,8 +1,99 @@
-scroll-craft
-An agent skill for building premium, immersive, scroll-driven websites. Works with Codex, Claude Code, and other coding agents.
+name: Deploy to GitHub Pages
 
-Live reference
-index.html — Sender — Engineering the Signal, an immersive one-pager (Spanish) for a Chilean RF / broadcast engineering company. Vanilla HTML/CSS/JS with vendored GSAP + ScrollTrigger + Lenis (no build step):
+on:
+  push:
+    branches:
+      - arena/01a0a675-scroll-craft
+  workflow_dispatch:
 
-python3 -m http.server 8080 --bind 0.0.0.0
-Motion system: preloader with decode text, Lenis smooth scroll, custom cursor, scramble/decode eyebrow, marquee tickers, word-scrub statement reveal, pinned process steps, pinned horizontal project gallery, sticky two-column product catalog (12 families), magnetic buttons, section HUD, grain overlay.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Node (optional)
+        if: runner.os == 'Linux' || runner.os == 'macOS'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Build (if package.json has build)
+        run: |
+          if [ -f package.json ]; then
+            echo "package.json found"
+            if node -e "try{const p=require('./package.json'); if(p.scripts && p.scripts.build) process.exit(0); else process.exit(1)}catch(e){process.exit(1)}"; then
+              echo "build script detected, installing and running build"
+              npm ci || npm install
+              npm run build || true
+            else
+              echo "no build script"
+            fi
+          else
+            echo "no package.json"
+          fi
+        shell: bash
+
+      - name: Prepare Pages artifact
+        run: |
+          set -euo pipefail
+          mkdir -p pages
+          shopt -s dotglob nullglob || true
+
+          # prefer common build output directories if present
+          if [ -d dist ]; then
+            echo "Using dist/ as pages content"
+            cp -a dist/. pages/
+          elif [ -d build ]; then
+            echo "Using build/ as pages content"
+            cp -a build/. pages/
+          elif [ -d public ]; then
+            echo "Using public/ as pages content"
+            cp -a public/. pages/
+          else
+            echo "No build dir found — copying repository root (excluding meta dirs)"
+            for f in * .[!.]* ..?*; do
+              # skip current/parent and metadata
+              [ "$f" = "." ] && continue || true
+              [ "$f" = ".." ] && continue || true
+              case "$f" in
+                .git|.github|node_modules|pages|scroll-craft.zip)
+                  continue
+                  ;;
+              esac
+              cp -a "$f" pages/ || true
+            done
+          fi
+
+          # ensure index exists
+          if [ ! -f pages/index.html ]; then
+            echo "WARNING: pages/index.html not found"
+          fi
+
+          echo "Pages artifact contents:"
+          ls -la pages || true
+        shell: bash
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: pages
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
