@@ -1,51 +1,34 @@
-# Sample workflow for building and deploying a Jekyll site to GitHub Pages
-name: Deploy Jekyll with GitHub Pages dependencies preinstalled
+# SENDER — Ingeniería de la señal
 
-on:
-  # Runs on pushes targeting the default branch
-  push:
-    branches: ["main"]
+Experiencia nueva para [Sender Chile](https://www.sender.cl/). No es un rediseño de la interfaz anterior: el repositorio [sender](https://github.com/cristianoleamiranda-dotcom/sender) aporta hechos, textos, fichas e imágenes. La composición, el recorrido y el sistema de movimiento son otros.
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+Repositorio de esta experiencia: [sender-immersive](https://github.com/cristianoleamiranda-dotcom/sender-immersive).
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+## Recorrido
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
+Entrada → señal → Sender → ingeniería → transmisión → archivo de proyectos → tecnología → contacto.
 
-jobs:
-  # Build job
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-      - name: Build with Jekyll
-        uses: actions/jekyll-build-pages@v1
-        with:
-          source: ./
-          destination: ./_site
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+## Puesta en marcha
 
-  # Deployment job
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v5
+```bash
+npm ci
+npm run dev
+npm run build
+npm run qa
+```
+
+`npm run build` exige Node 20+ y genera `dist/`, el sitemap y cascarones HTML por ruta.
+
+## Idiomas
+
+Español en `/`. Inglés en `/en`. El interruptor ES / EN conserva la ruta.
+
+## Paleta
+
+`#FFFFFF` `#1E73BE` `#494949` `#0085B2`. Nada más.
+
+## Notas
+
+- Three.js se carga solo en escritorio, con puntero fino y sin reduced motion. En móvil la señal es canvas 2D.
+- El formulario abre el cliente de correo. No guarda datos.
+- Inventario: `docs/CONTENT-INVENTORY.md`. Skills: `docs/SKILLS.md`.

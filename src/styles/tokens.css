@@ -1,0 +1,62 @@
+:root {
+  --sender-white: #ffffff;
+  --sender-blue: #1e73be;
+  --sender-gray: #494949;
+  --sender-cyan: #0085b2;
+
+  --paper: var(--sender-white);
+  --ink: var(--sender-gray);
+  --signal: var(--sender-blue);
+  --cyan: var(--sender-cyan);
+  --field: var(--sender-gray);
+
+  --rule: rgba(73, 73, 73, 0.16);
+  --rule-strong: rgba(73, 73, 73, 0.32);
+  --rule-light: rgba(255, 255, 255, 0.28);
+  --signal-soft: rgba(30, 115, 190, 0.14);
+  --cyan-soft: rgba(0, 133, 178, 0.16);
+
+  --font-sans: "Instrument Sans", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+
+  --step-0: 0.75rem;
+  --step-1: 0.9375rem;
+  --step-2: 1.0625rem;
+  --step-3: clamp(1.35rem, 2vw, 1.75rem);
+  --step-4: clamp(2rem, 4vw, 3.25rem);
+  --step-5: clamp(3.2rem, 7vw, 6.4rem);
+  --step-6: clamp(4.6rem, 13vw, 11.5rem);
+
+  --gutter: clamp(1.15rem, 3.6vw, 3.5rem);
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2.5rem;
+  --space-7: 4.5rem;
+  --space-8: 7.5rem;
+
+  --ease: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur: 0.8s;
+  --dur-slow: 1.3s;
+
+  --z-signal: 1;
+  --z-content: 2;
+  --z-nav: 30;
+  --z-overlay: 40;
+  --z-dialog: 50;
+
+  --bp-mobile: 720px;
+  --bp-tablet: 1100px;
+  --bp-desk: 1440px;
+
+  --nav-h: 4.25rem;
+  color-scheme: light;
+}
+
+@media (min-width: 1440px) {
+  :root {
+    --gutter: 4.5rem;
+  }
+}

@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>SENDER</title>
+    <script>
+      (function () {
+        var path = location.pathname;
+        var marker = "/scroll-craft/";
+        var base = path.indexOf(marker) === 0 ? marker : "/";
+        var rest = path.slice(base.length);
+        location.replace(base + "?redirect=" + encodeURIComponent(rest + location.search + location.hash));
+      })();
+    </script>
+  </head>
+  <body></body>
+</html>
