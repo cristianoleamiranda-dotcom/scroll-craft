@@ -1,29 +1,49 @@
-name: Deploy to GitHub Pages
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { dirname, join } from "node:path";
 
-on: push: branches:
+const site = (process.env.VITE_SITE_URL || "https://www.sender.cl").replace(/\/$/, "");
+const catalog = readFileSync("src/data/catalog.ts", "utf8");
+const [catPart, prodPart] = catalog.split("export const products");
+const slugs = (part) => [...part.matchAll(/slug: "([^"]+)"/g)].map((match) => match[1]);
+const categories = slugs(catPart);
+const products = slugs(prodPart);
 
-arena/01a0a675-scroll-craft workflow_dispatch: permissions: contents: read pages: write id-token: write
+const paths = ["/", "/en", "/productos", "/en/productos"];
+categories.forEach((slug) => {
+  paths.push(`/productos/${slug}`, `/en/productos/${slug}`);
+});
+products.forEach((slug) => {
+  paths.push(`/producto/${slug}`, `/en/producto/${slug}`);
+});
 
-concurrency: group: pages cancel-in-progress: false
+const urls = paths
+  .map((path) => {
+    const loc = `${site}${path === "/" ? "/" : path}`;
+    const es = path.startsWith("/en") ? path.replace(/^\/en/, "") || "/" : path;
+    const en = es === "/" ? "/en" : `/en${es}`;
+    return `  <url>\n    <loc>${loc}</loc>\n    <xhtml:link rel="alternate" hreflang="es-CL" href="${site}${es === "/" ? "/" : es}"/>\n    <xhtml:link rel="alternate" hreflang="en" href="${site}${en}"/>\n  </url>`;
+  })
+  .join("\n");
 
-jobs: build-and-deploy: runs-on: ubuntu-latest steps:
+const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${urls}\n</urlset>\n`;
+writeFileSync("public/sitemap.xml", sitemap);
+writeFileSync("dist/sitemap.xml", sitemap);
 
-name: Checkout uses: actions/checkout@v4 with: fetch-depth: 0
+const index = readFileSync("dist/index.html", "utf8");
+const shells = [
+  ...categories.map((slug) => [`productos/${slug}`, `SENDER Chile | ${slug}`]),
+  ...products.map((slug) => [`producto/${slug}`, `SENDER Chile | ${slug}`]),
+  ["productos", "SENDER Chile | Catálogo"],
+  ["en", "SENDER Chile | RF Engineering, Broadcasting & Transmission Systems"],
+];
 
-name: Install Node (optional) if: runner.os == 'Linux' || runner.os == 'macOS' uses: actions/setup-node@v4 with: node-version: '18'
+shells.forEach(([route, title]) => {
+  const file = join("dist", route, "index.html");
+  mkdirSync(dirname(file), { recursive: true });
+  const html = index
+    .replace(/<title>[^<]*<\/title>/, `<title>${title}</title>`)
+    .replace(/<link rel="canonical" href="[^"]*"/, `<link rel="canonical" href="${site}/${route}"`);
+  writeFileSync(file, html);
+});
 
-name: Build (if package.json has build) run: | if [ -f package.json ]; then echo "package.json found" if node -e "try{const p=require('./package.json'); if(p.scripts && p.scripts.build) process.exit(0); else process.exit(1)}catch(e){process.exit(1)}"; then echo "build script detected, installing and running build" npm ci || npm install npm run build || true else echo "no build script" fi else echo "no package.json" fi shell: bash
-
-name: Prepare Pages artifact run: | set -euo pipefail mkdir -p pages shopt -s dotglob nullglob || true
-
-prefer common build output directories if present if [ -d dist ]; then echo "Using dist/ as pages content" cp -a dist/. pages/ elif [ -d build ]; then echo "Using build/ as pages content" cp -a build/. pages/ elif [ -d public ]; then echo "Using public/ as pages content" cp -a public/. pages/ else echo "No build dir found — copying repository root (excluding meta dirs)" for f in * .[!.]* ..?*; do # skip current/parent and metadata [ "$f" = "." ] && continue || true [ "$f" = ".." ] && continue || true case "$f" in .git|.github|node_modules|pages|scroll-craft.zip) continue ;; esac cp -a "$f" pages/ || true done fi
-
-ensure index exists if [ ! -f pages/index.html ]; then echo "WARNING: pages/index.html not found" fi
-
-echo "Pages artifact contents:" ls -la pages || true shell: bash
-
-name: Setup Pages uses: actions/configure-pages@v5
-
-name: Upload artifact uses: actions/upload-pages-artifact@v3 with: path: pages
-
-name: Deploy to GitHub Pages id: deployment uses: actions/deploy-pages@v4
+console.log(`seo: ${paths.length} urls, ${shells.length} route shells`);
