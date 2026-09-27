@@ -2,8 +2,7 @@ name: Deploy to GitHub Pages
 
 on: push: branches:
 
-arena/01a0a675-scroll-craft workflow_dispatch:
-permissions: contents: read pages: write id-token: write
+arena/01a0a675-scroll-craft workflow_dispatch: permissions: contents: read pages: write id-token: write
 
 concurrency: group: pages cancel-in-progress: false
 
@@ -17,11 +16,9 @@ name: Build (if package.json has build) run: | if [ -f package.json ]; then echo
 
 name: Prepare Pages artifact run: | set -euo pipefail mkdir -p pages shopt -s dotglob nullglob || true
 
-prefer common build output directories if present
-if [ -d dist ]; then echo "Using dist/ as pages content" cp -a dist/. pages/ elif [ -d build ]; then echo "Using build/ as pages content" cp -a build/. pages/ elif [ -d public ]; then echo "Using public/ as pages content" cp -a public/. pages/ else echo "No build dir found — copying repository root (excluding meta dirs)" for f in * .[!.]* ..?*; do # skip current/parent and metadata [ "$f" = "." ] && continue || true [ "$f" = ".." ] && continue || true case "$f" in .git|.github|node_modules|pages|scroll-craft.zip) continue ;; esac cp -a "$f" pages/ || true done fi
+prefer common build output directories if present if [ -d dist ]; then echo "Using dist/ as pages content" cp -a dist/. pages/ elif [ -d build ]; then echo "Using build/ as pages content" cp -a build/. pages/ elif [ -d public ]; then echo "Using public/ as pages content" cp -a public/. pages/ else echo "No build dir found — copying repository root (excluding meta dirs)" for f in * .[!.]* ..?*; do # skip current/parent and metadata [ "$f" = "." ] && continue || true [ "$f" = ".." ] && continue || true case "$f" in .git|.github|node_modules|pages|scroll-craft.zip) continue ;; esac cp -a "$f" pages/ || true done fi
 
-ensure index exists
-if [ ! -f pages/index.html ]; then echo "WARNING: pages/index.html not found" fi
+ensure index exists if [ ! -f pages/index.html ]; then echo "WARNING: pages/index.html not found" fi
 
 echo "Pages artifact contents:" ls -la pages || true shell: bash
 
