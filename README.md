@@ -1,34 +1,29 @@
-# SENDER — Ingeniería de la señal
+name: Deploy to GitHub Pages
 
-Experiencia nueva para [Sender Chile](https://www.sender.cl/). No es un rediseño de la interfaz anterior: el repositorio [sender](https://github.com/cristianoleamiranda-dotcom/sender) aporta hechos, textos, fichas e imágenes. La composición, el recorrido y el sistema de movimiento son otros.
+on: push: branches:
 
-Repositorio de esta experiencia: [sender-immersive](https://github.com/cristianoleamiranda-dotcom/sender-immersive).
+arena/01a0a675-scroll-craft workflow_dispatch: permissions: contents: read pages: write id-token: write
 
-## Recorrido
+concurrency: group: pages cancel-in-progress: false
 
-Entrada → señal → Sender → ingeniería → transmisión → archivo de proyectos → tecnología → contacto.
+jobs: build-and-deploy: runs-on: ubuntu-latest steps:
 
-## Puesta en marcha
+name: Checkout uses: actions/checkout@v4 with: fetch-depth: 0
 
-```bash
-npm ci
-npm run dev
-npm run build
-npm run qa
-```
+name: Install Node (optional) if: runner.os == 'Linux' || runner.os == 'macOS' uses: actions/setup-node@v4 with: node-version: '18'
 
-`npm run build` exige Node 20+ y genera `dist/`, el sitemap y cascarones HTML por ruta.
+name: Build (if package.json has build) run: | if [ -f package.json ]; then echo "package.json found" if node -e "try{const p=require('./package.json'); if(p.scripts && p.scripts.build) process.exit(0); else process.exit(1)}catch(e){process.exit(1)}"; then echo "build script detected, installing and running build" npm ci || npm install npm run build || true else echo "no build script" fi else echo "no package.json" fi shell: bash
 
-## Idiomas
+name: Prepare Pages artifact run: | set -euo pipefail mkdir -p pages shopt -s dotglob nullglob || true
 
-Español en `/`. Inglés en `/en`. El interruptor ES / EN conserva la ruta.
+prefer common build output directories if present if [ -d dist ]; then echo "Using dist/ as pages content" cp -a dist/. pages/ elif [ -d build ]; then echo "Using build/ as pages content" cp -a build/. pages/ elif [ -d public ]; then echo "Using public/ as pages content" cp -a public/. pages/ else echo "No build dir found — copying repository root (excluding meta dirs)" for f in * .[!.]* ..?*; do # skip current/parent and metadata [ "$f" = "." ] && continue || true [ "$f" = ".." ] && continue || true case "$f" in .git|.github|node_modules|pages|scroll-craft.zip) continue ;; esac cp -a "$f" pages/ || true done fi
 
-## Paleta
+ensure index exists if [ ! -f pages/index.html ]; then echo "WARNING: pages/index.html not found" fi
 
-`#FFFFFF` `#1E73BE` `#494949` `#0085B2`. Nada más.
+echo "Pages artifact contents:" ls -la pages || true shell: bash
 
-## Notas
+name: Setup Pages uses: actions/configure-pages@v5
 
-- Three.js se carga solo en escritorio, con puntero fino y sin reduced motion. En móvil la señal es canvas 2D.
-- El formulario abre el cliente de correo. No guarda datos.
-- Inventario: `docs/CONTENT-INVENTORY.md`. Skills: `docs/SKILLS.md`.
+name: Upload artifact uses: actions/upload-pages-artifact@v3 with: path: pages
+
+name: Deploy to GitHub Pages id: deployment uses: actions/deploy-pages@v4
