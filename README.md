@@ -1,20 +1,9 @@
-name: Jekyll site CI
+name: Deploy immersive site
 
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+on: push: branches: ["main"] workflow_dispatch:
 
-jobs:
-  build:
+permissions: contents: read pages: write id-token: write
 
-    runs-on: ubuntu-latest
+concurrency: group: pages cancel-in-progress: false
 
-    steps:
-    - uses: actions/checkout@v4
-    - name: Build the site in the jekyll/builder container
-      run: |
-        docker run \
-        -v ${{ github.workspace }}:/srv/jekyll -v ${{ github.workspace }}/_site:/srv/jekyll/_site \
-        jekyll/builder:latest /bin/bash -c "chmod -R 777 /srv/jekyll && jekyll build --future"
+jobs: build: runs-on: ubuntu-latest steps: - uses: actions/checkout@v4 - uses: actions/setup-node@v4 with: node-version: 22 cache: npm - run: npm ci - run: npm run build env: VITE_BASE_PATH: /${{ github.event.repository.name }}/ VITE_SITE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }} - uses: actions/upload-pages-artifact@v3 with: path: dist deploy: needs: build runs-on: ubuntu-latest environment: name: github-pages url: ${{ steps.deployment.outputs.page_url }} steps: - id: deployment uses: actions/deploy-pages@v4
