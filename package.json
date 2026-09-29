@@ -1,0 +1,33 @@
+{
+  "name": "sender-immersive",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "SENDER Chile — Engineering the Signal. Experiencia editorial inmersiva. El contenido factual proviene del repositorio sender; la interfaz es nueva.",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0 --port 5173",
+    "build": "tsc --noEmit && vite build && node scripts/seo.mjs",
+    "typecheck": "tsc --noEmit",
+    "preview": "vite preview --host 0.0.0.0 --port 4173",
+    "qa": "node qa/check.mjs",
+    "seo": "node scripts/seo.mjs"
+  },
+  "dependencies": {
+    "@fontsource/ibm-plex-mono": "5.2.6",
+    "@fontsource/instrument-sans": "5.2.8",
+    "gsap": "3.13.0",
+    "lenis": "1.3.11",
+    "react": "19.1.1",
+    "react-dom": "19.1.1",
+    "react-router-dom": "7.8.2",
+    "three": "0.180.0"
+  },
+  "devDependencies": {
+    "@types/react": "19.1.12",
+    "@types/react-dom": "19.1.9",
+    "@types/three": "0.180.0",
+    "@vitejs/plugin-react": "5.0.2",
+    "typescript": "5.9.2",
+    "vite": "7.1.5"
+  }
+}
