@@ -1,9 +1,41 @@
-name: Deploy immersive site
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import { fileURLToPath, URL } from "node:url";
 
-on: push: branches: ["main"] workflow_dispatch:
+const base = process.env.VITE_BASE_PATH || "/";
 
-permissions: contents: read pages: write id-token: write
-
-concurrency: group: pages cancel-in-progress: false
-
-jobs: build: runs-on: ubuntu-latest steps: - uses: actions/checkout@v4 - uses: actions/setup-node@v4 with: node-version: 22 cache: npm - run: npm ci - run: npm run build env: VITE_BASE_PATH: /${{ github.event.repository.name }}/ VITE_SITE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }} - uses: actions/upload-pages-artifact@v3 with: path: dist deploy: needs: build runs-on: ubuntu-latest environment: name: github-pages url: ${{ steps.deployment.outputs.page_url }} steps: - id: deployment uses: actions/deploy-pages@v4
+export default defineConfig({
+  base,
+  plugins: [react()],
+  resolve: {
+    alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) },
+  },
+  server: {
+    host: "0.0.0.0",
+    port: 5173,
+    strictPort: true,
+    allowedHosts: true,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+    },
+    hmr: {
+      overlay: false,
+    },
+  },
+  preview: {
+    host: "0.0.0.0",
+    port: 4173,
+    allowedHosts: true,
+  },
+  build: {
+    sourcemap: false,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes("node_modules/three")) return "three";
+          if (id.includes("node_modules/gsap") || id.includes("node_modules/lenis")) return "motion";
+        },
+      },
+    },
+  },
+});
